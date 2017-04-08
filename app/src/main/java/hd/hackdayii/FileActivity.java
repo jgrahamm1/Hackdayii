@@ -40,6 +40,7 @@ import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,28 +107,34 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             kpg.initialize(2048);
             kp = kpg.genKeyPair();
 
-
-            privateKey = kp.getPrivate();
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(null);
-            KeyStore.PrivateKeyEntry pkEntry =
-                    new KeyStore.PrivateKeyEntry(privateKey,null);
-
-            ks.setEntry("privateKey", pkEntry, null);
-
-            // store away the keystore
-            try (FileOutputStream fos = new FileOutputStream("seckeystore")) {
-                ks.store(fos, null);
-            }
-
-            publicKey = kp.getPublic();
-
-            KeyFactory fact = KeyFactory.getInstance("RSA");
-            RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
-                    RSAPublicKeySpec.class);
+//
+//            privateKey = kp.getPrivate();
+//            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+//            ks.load(null);
+//            KeyStore.PrivateKeyEntry pkEntry =
+//                    new KeyStore.PrivateKeyEntry(privateKey,null);
+//
+//            ks.setEntry("privateKey", pkEntry, null);
+//
+//            // store away the keystore
+//            try (FileOutputStream fos = new FileOutputStream("seckeystore")) {
+//                ks.store(fos, null);
+//            }
 
             CryptoPKI cr = new CryptoPKI();
 
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+
+            RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(),
+                    RSAPrivateKeySpec.class);
+            cr.saveToFile(cr.MY_PRIVATE_KEY_FILE,
+                    priv.getModulus(), priv.getPrivateExponent());
+
+            RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
+                    RSAPublicKeySpec.class);
+
+            cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
+                    pub.getModulus(), pub.getPublicExponent());
             cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
                     pub.getModulus(), pub.getPublicExponent());
 

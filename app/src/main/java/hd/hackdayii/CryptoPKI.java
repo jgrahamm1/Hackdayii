@@ -38,25 +38,27 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CryptoPKI {
     public String MY_PUBLIC_KEY_FILE = "mypubkey";
+    public String MY_PRIVATE_KEY_FILE = "myprikey";
     public String OTHER_PUBLIC_KEY_FILE = "otherpubkey";
 
     byte[] encryptedBytes, decryptedBytes;
     Cipher cipher, cipher1;
-    String encrypted, decrypted;
-    public PublicKey publicKey;
+
+    public PublicKey myPublicKey;
     public PrivateKey privateKey;
-    public FileInputStream fis;
-    public KeyStore ks;
 
-    public CryptoPKI() throws FileNotFoundException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException, CertificateException {
+//    public FileInputStream fis;
+//    public KeyStore ks;
 
-        ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        fis = new FileInputStream("seckeystore");
-        ks.load(fis, null);
-
-        KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("privateKey", null);
-        privateKey = pkEntry.getPrivateKey();
-    }
+//    public CryptoPKI() throws FileNotFoundException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException, CertificateException {
+//
+//        ks = KeyStore.getInstance(KeyStore.getDefaultType());
+//        fis = new FileInputStream("seckeystore");
+//        ks.load(fis, null);
+//
+//        KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("privateKey", null);
+//        privateKey = pkEntry.getPrivateKey();
+//    }
 
     public byte[] RSAEncryptPub(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -107,6 +109,26 @@ public class CryptoPKI {
             KeyFactory fact = KeyFactory.getInstance("RSA");
             PublicKey pubKey = fact.generatePublic(keySpec);
             return pubKey;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            oin.close();
+        }
+        return null;
+    }
+
+
+    private PublicKey readPrivateKey() throws Exception {
+        InputStream in = new FileInputStream(MY_PRIVATE_KEY_FILE);
+        ObjectInputStream oin =
+                new ObjectInputStream(new BufferedInputStream(in));
+        try {
+            BigInteger m = (BigInteger) oin.readObject();
+            BigInteger e = (BigInteger) oin.readObject();
+            RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            PublicKey priKey = fact.generatePublic(keySpec);
+            return priKey;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
