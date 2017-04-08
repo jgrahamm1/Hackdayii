@@ -51,18 +51,25 @@ public class AESCrypto {
     }
 
 
-    public static String encrypt(byte[] bytes)
+    public static String[] encrypt(byte[] bytes)
             throws Exception {
         byte[] rawKey = getRawKey();
+
         byte[] result = encrypt(rawKey, bytes);
-        return toHex(result);
+        String arr[] = new String[2];
+        arr[0] = toHex(result);
+        arr[1] = toHex(bytes);
+        return arr;
     }
 
-    public static String encrypt(String cleartext)
+    public static String[] encrypt(String cleartext)
             throws Exception {
         byte[] rawKey = getRawKey();
         byte[] result = encrypt(rawKey, cleartext.getBytes());
-        return toHex(result);
+        String arr[] = new String[2];
+        arr[0] = toHex(result);
+        arr[1] = toHex(rawKey);
+        return arr;
     }
 
 

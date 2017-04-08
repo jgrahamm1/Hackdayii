@@ -5,6 +5,7 @@ package hd.hackdayii;
  */
 
 import android.os.Environment;
+import android.util.Base64;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -29,6 +30,7 @@ import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.security.KeyStore;
 
@@ -135,6 +137,14 @@ public class CryptoPKI {
         return decryptedBytes;
     }
 
+    PublicKey getPublicKeyFromString(String key) throws Exception {
+        byte[] publicBytes = Base64.decode(key,Base64.DEFAULT);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PublicKey pubKey = keyFactory.generatePublic(keySpec);
+        return pubKey;
+    }
+
     PublicKey readPublicKey() throws Exception {
         // Get the directory for the user's public pictures directory.
         File file = new File(Environment.getExternalStoragePublicDirectory(
@@ -179,6 +189,8 @@ public class CryptoPKI {
         }
         return null;
     }
+
+
 
     public void saveToFile(String fileName,
                                    BigInteger mod, BigInteger exp)
