@@ -2,6 +2,7 @@ package hd.hackdayii;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -22,7 +23,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
@@ -40,11 +43,51 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
     private static final int READ_REQUEST_CODE = 42;
 
-    @Override
+    void fetchdata() {
+        String serv_res = "";
+        Map<String, String> params = new HashMap<String, String>();
+        try {
+            serv_res = ServerUtil.get("http://kitabu.prashant.at/api/register", params, getApplicationContext());
+            Log.d("Register response", serv_res);
+            if(serv_res.equals("false"))
+            {
+
+            }
+            else
+            {
+
+            }
+            serv_res = ServerUtil.get("http://kitabu.prashant.at/api/getkeys", params, getApplicationContext());
+            Log.d("Getkeys response", serv_res);
+            if(serv_res.equals("false"))
+            {
+
+            }
+            else
+            {
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    class FetchDataAsyncTask extends AsyncTask<Void, Void, String>
+    {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            fetchdata();
+            return null;
+        }
+    }
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
-
+        FetchDataAsyncTask asyncTask = new FetchDataAsyncTask();
+        asyncTask.execute();
         String[] values = new String[]{"Android", "iPhone", "WindowsMobile is dead",
                 "Blackberry seriously sucks", "WebOS", "Ubuntu Sucks", "Windows7 Sucks", "Max OS X Is Best",
                 "Linux is ok", "OS/2"};
