@@ -85,6 +85,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     public String m_phoneno;
     public String m_data;
     public String m_fname;
+    public String m_aeskey;
 
     // BUTTOOOOOOOONNNNNN
     public Button view_btn;
@@ -315,11 +316,8 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         File file = new File(filepath);
         String fname = file.getName();
 
-        // MD5 Hash the File
 
-        String digest = this.getMD5digest(file);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("",
+        SharedPreferences sharedPreferences = getSharedPreferences("seckey_preferences",
                 Context.MODE_PRIVATE);
         // SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -333,6 +331,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         {
             generate_keypair();
         }
+
         // Encrypt the file we are reading
         encryptFile(file, catFName(fname));
 
@@ -357,6 +356,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             } catch (IOException e) {
             }
         }
+
     }
 
     private String getMD5digest(File file) {
@@ -402,6 +402,8 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
 
     public void encryptFile(File file, String fname) {
+        // MD5 Hash the File
+        String digest = this.getMD5digest(file);
 
         // Create byte array from file
         try {
@@ -409,11 +411,21 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
             // encrypt the byte array
             try {
-                String hex_str = encrypt(byte_array);
-                Log.d("FILES", hex_str);
+                String[] hex_strs = encrypt(byte_array);
+                String hex_str = hex_strs[0];
+                String aes_key = hex_strs[1];
+
+                SharedPreferences sharedPreferences = getSharedPreferences("aes_preferences",
+                        Context.MODE_PRIVATE);
+
+                SharedPreferences.Editor keyValuesEditor = sharedPreferences.edit();
+
+                keyValuesEditor.putString(digest, aes_key);
+
+                keyValuesEditor.commit();
 
                 // save the encrypted hex to a file
-                saveEncrypted(hex_str, fname);
+                saveEncrypted(hex_str, fname, aes_key);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -423,7 +435,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         }
     }
 
-    public void saveEncrypted(String hex, String fname) {
+    public void saveEncrypted(String hex, String fname, String aes_key) {
         // Get the directory for the user's public pictures directory.
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS), fname);
@@ -438,6 +450,8 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 // Send the file to the server
                 m_data = hex;
                 m_fname = fname;
+                m_aeskey = aes_key;
+
                 SendFileTask sft = new SendFileTask();
                 sft.execute();
 
@@ -463,7 +477,6 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
         private Exception exception;
         private String serv_res;
-
         /*
          * Let's get this done in the background.
          */
@@ -474,6 +487,8 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 params.put("phoneno", m_phoneno);
                 params.put("data", m_data);
                 params.put("filename", m_fname);
+                params.put("aeskey",m_aeskey);
+                
                 // Send to server
                 try {
                     serv_res = ServerUtil.get("http://kitabu.prashant.at/api/putfiles",
