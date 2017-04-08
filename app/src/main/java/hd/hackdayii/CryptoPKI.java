@@ -63,11 +63,21 @@ public class CryptoPKI {
 //        privateKey = pkEntry.getPrivateKey();
 //    }
 
-//    public byte[] RSAEncrypt(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
-//            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-//        // First encrypt with my public
-//
-//    }
+    public byte[] RSAEncrypt(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        // First encrypt with my public
+        byte[] encryptedPub = RSAEncryptPub(plain,encryptKey);
+        byte[] encrypted = RSAEncryptPrivate(encryptedPub);
+        return encrypted;
+    }
+
+    public byte[] RSADecrypt(byte[] encryptedFile, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        // First encrypt with my public
+        byte[] encryptedPub = RSADecryptPrivate(encryptedFile);
+        byte[] decrypted = RSADecryptPub(encryptedPub,encryptKey);
+        return decrypted;
+    }
 
     public byte[] RSAEncryptPub(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -108,6 +118,15 @@ public class CryptoPKI {
     }
 
     public byte[] RSADecryptPrivate(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        cipher1 = Cipher.getInstance("RSA");
+        cipher1.init(Cipher.DECRYPT_MODE, privateKey);
+        decryptedBytes = cipher1.doFinal(encryptedBytes);
+//        System.out.println("DDecrypted?????" + decrypted);
+        return decryptedBytes;
+    }
+
+    public byte[] RSADecryptPrivate(byte[] encryptedBytes) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         cipher1 = Cipher.getInstance("RSA");
         cipher1.init(Cipher.DECRYPT_MODE, privateKey);
