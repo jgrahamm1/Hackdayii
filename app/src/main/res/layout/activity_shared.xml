@@ -8,4 +8,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/shared_list">
     </ListView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/get_button"
+        android:gravity="bottom"
+        android:text="Update File View"/>
 </LinearLayout>
