@@ -95,6 +95,7 @@ public class CryptoPKI {
         } finally {
             oin.close();
         }
+        return null;
     }
 
     private static void saveToFile(String fileName,
