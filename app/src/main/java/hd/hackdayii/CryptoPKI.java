@@ -6,6 +6,7 @@ package hd.hackdayii;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.security.KeyStore;
@@ -39,27 +41,19 @@ public class CryptoPKI {
     byte[] encryptedBytes, decryptedBytes;
     Cipher cipher, cipher1;
     String encrypted, decrypted;
-    PublicKey publicKey;
-    PrivateKey privateKey;
+    public PublicKey publicKey;
+    public PrivateKey privateKey;
+    public FileInputStream fis;
+    public KeyStore ks;
 
-    try {
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        FileInputStream fis = new FileInputStream("seckeystore"));
+    public CryptoPKI() throws FileNotFoundException, IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableEntryException, CertificateException {
+
+        ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        fis = new FileInputStream("seckeystore");
         ks.load(fis, null);
+
         KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("privateKey", null);
         privateKey = pkEntry.getPrivateKey();
-    }
-    catch(java.security.KeyStoreException kse) {
-        kse.printStackTrace();
-    }
-    catch(NoSuchAlgorithmException nsa) {
-        nsa.printStackTrace();
-    }
-    catch(UnrecoverableEntryException ew) {
-        ew.printStackTrace();
-    }
-    catch(FileNotFoundException fo) {
-        fo.printStackTrace();
     }
 
     public byte[] RSAEncryptPub(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
