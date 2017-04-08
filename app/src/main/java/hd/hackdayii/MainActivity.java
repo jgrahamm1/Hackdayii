@@ -39,12 +39,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Login Button
             case R.id.login_button:
-                Intent login_intent = new Intent(v.getContext(), FileActivity.class);
-                startActivity(login_intent);
+                if (validate()) {
+                    Intent login_intent = new Intent(v.getContext(), FileActivity.class);
+                    startActivity(login_intent);
+                }
                 break;
 
             default:
                 Log.d("ERROR", "MainActivity OnClickListener does not recognize this View");
         }
+    }
+
+    // Validate the EditText fields
+    public boolean validate() {
+        boolean valid = true;
+        String mobile = phone_etxt.getText().toString();
+
+
+        if (mobile.isEmpty() || mobile.length() != 10) {
+            phone_etxt.setError("Enter Valid Mobile Number");
+            valid = false;
+        } else {
+            phone_etxt.setError(null);
+        }
+
+        Log.d("LOGIN", "Validation result is " + valid);
+        return valid;
     }
 }
