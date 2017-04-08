@@ -63,6 +63,12 @@ public class CryptoPKI {
 //        privateKey = pkEntry.getPrivateKey();
 //    }
 
+//    public byte[] RSAEncrypt(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+//            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+//        // First encrypt with my public
+//
+//    }
+
     public byte[] RSAEncryptPub(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         cipher = Cipher.getInstance("RSA");
@@ -81,6 +87,15 @@ public class CryptoPKI {
 //        decrypted = new String(decryptedBytes);
 //        System.out.println("DDecrypted?????" + decrypted);
         return decryptedBytes;
+    }
+
+    public byte[] RSAEncryptPrivate(byte[] encryptedBytes) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+        encryptedBytes = cipher.doFinal(encryptedBytes);
+//        System.out.println("EEncrypted?????" + toHex(encryptedBytes));
+        return encryptedBytes;
     }
 
     public byte[] RSAEncryptPrivate(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
@@ -143,7 +158,6 @@ public class CryptoPKI {
     public void saveToFile(String fileName,
                                    BigInteger mod, BigInteger exp)
             throws Exception {
-
         // Get the directory for the user's public pictures directory.
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOWNLOADS), fileName);
