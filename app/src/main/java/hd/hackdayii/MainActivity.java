@@ -13,6 +13,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 /*
 ** MainActivity: The launch screen of the application
  */
@@ -24,10 +30,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Button login_button; // Login button
     protected EditText phone_etxt; // Phone Number EditText
 
+    KeyPairGenerator kpg;
+    KeyPair kp;
+    PublicKey publicKey;
+    PrivateKey privateKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        try {
+            kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(2048);
+            kp = kpg.genKeyPair();
+            publicKey = kp.getPublic();
+            privateKey = kp.getPrivate();
+        } catch (NoSuchAlgorithmException ns) {
+            ns.printStackTrace();
+        }
 
         // Register listener for buttons
         login_button = (Button) findViewById(R.id.login_button);
