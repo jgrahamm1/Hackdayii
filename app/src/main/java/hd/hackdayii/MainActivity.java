@@ -2,7 +2,9 @@ package hd.hackdayii;
 
 import hd.hackdayii.CryptoPKI;
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -50,6 +52,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("seckey_preferences",
+                Context.MODE_PRIVATE);
+        String phoneno = sharedPreferences.getString("phoneno", null);
+
+        if (phoneno != null)
+        {
+            Intent login_intent = new Intent(getApplicationContext(), FileActivity.class);
+            login_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(login_intent);
+        }
         // Register listener for buttons
         login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(this);
@@ -87,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.login_button:
                 if (validate()) {
                     Intent login_intent = new Intent(v.getContext(), FileActivity.class);
+                    login_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    login_intent.putExtra("phoneno", phone_etxt.toString());
                     startActivity(login_intent);
                 }
                 break;

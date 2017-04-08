@@ -23,6 +23,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -92,8 +96,13 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             else
             {
 
+                JSONObject jObject = new JSONObject(serv_res);
+                JSONArray jsonArray = jObject.getJSONArray("keys");
+                Log.d("JSON ARRAY", jsonArray.toString());
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -172,6 +181,18 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
+
+            Intent intent = getIntent();
+
+            if (intent.getStringExtra("phoneno") != null) {
+                SharedPreferences sharedPreferences = getSharedPreferences("seckey_preferences",
+                        Context.MODE_PRIVATE);
+                String phoneno = intent.getStringExtra("phoneno");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("phoneno", phoneno);
+                editor.commit();
+            }
+
 
 
             SharedPreferences sharedPreferences = getSharedPreferences("seckey_preferences",
