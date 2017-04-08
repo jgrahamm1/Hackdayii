@@ -3,6 +3,7 @@ package hd.hackdayii;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ import java.util.List;
 
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
+
+import static hd.hackdayii.AESCrypto.encrypt;
+import static org.apache.commons.io.FileUtils.readFileToByteArray;
 
 /**
  * Created by jgraham on 4/8/17.
@@ -40,9 +45,9 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
 
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile is dead",
+        String[] values = new String[]{"Android", "iPhone", "WindowsMobile is dead",
                 "Blackberry seriously sucks", "WebOS", "Ubuntu Sucks", "Windows7 Sucks", "Max OS X Is Best",
-                "Linux is ok", "OS/2" };
+                "Linux is ok", "OS/2"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, values);
         //setListAdapter(adapter);
@@ -88,6 +93,10 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     public void readFile(String filepath) {
         List<Integer> list = new ArrayList<Integer>();
         File file = new File(filepath);
+        String fname = file.getName();
+        // Encrypt the file we are reading
+        encryptFile(file, catFName(fname));
+
         BufferedReader reader = null;
 
         try {
@@ -109,5 +118,56 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             } catch (IOException e) {
             }
         }
+    }
+
+    public void encryptFile(File file, String fname) {
+
+        // Create byte array from file
+        try {
+            byte[] byte_array = readFileToByteArray(file);
+
+            // encrypt the byte array
+            try {
+                String hex_str = encrypt(byte_array);
+                Log.d("FILES", hex_str);
+
+                // save the encrypted hex to a file
+                saveEncrypted(hex_str, fname);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveEncrypted(String hex, String fname) {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fname);
+        FileOutputStream stream = null;
+        try {
+            stream = new FileOutputStream(file);
+            try {
+                stream.write(hex.getBytes());
+                stream.close();
+                Log.d("FILES", "Encrypted file saved to " + file.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String catFName(String fname) {
+        if (fname.contains(".")) {
+            StringBuilder sb = new StringBuilder(fname);
+            int index = fname.indexOf(".");
+            sb.delete(index, sb.length());
+            return sb.toString();
+        }
+        return fname;
     }
 }
