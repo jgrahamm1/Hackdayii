@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -30,15 +31,19 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.DigestInputStream;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -300,13 +305,36 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             Log.d("FILES", selectedFilesPaths[i]);
         }
 
-        readFile(selectedFilesPaths[0]);
+        try {
+            readFile(selectedFilesPaths[0]);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void readFile(String filepath) {
+    public void readFile(String filepath) throws NoSuchAlgorithmException {
         List<Integer> list = new ArrayList<Integer>();
         File file = new File(filepath);
         String fname = file.getName();
+
+        // MD5 Hash the File
+
+        String digest = this.getMD5digest(file);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("",
+                Context.MODE_PRIVATE);
+        // SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        boolean flag;
+
+        flag = sharedPreferences.getBoolean("flag", false);
+
+        Log.d("flag", String.valueOf(flag));
+
+        if(flag == false)
+        {
+            generate_keypair();
+        }
         // Encrypt the file we are reading
         encryptFile(file, catFName(fname));
 
@@ -332,6 +360,48 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             }
         }
     }
+
+    private String getMD5digest(File file) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            FileInputStream fis = new FileInputStream(file);
+
+            byte[] dataBytes = new byte[1024];
+
+            int nread = 0;
+            while ((nread = fis.read(dataBytes)) != -1) {
+                md.update(dataBytes, 0, nread);
+            };
+            byte[] mdbytes = md.digest();
+
+            //convert the byte to hex format method 1
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+
+            Log.d("md5", "Digest(in hex format):: " + sb.toString());
+
+            //convert the byte to hex format method 2
+            StringBuffer hexString = new StringBuffer();
+            for (int i=0;i<mdbytes.length;i++) {
+                String hex=Integer.toHexString(0xff & mdbytes[i]);
+                if(hex.length()==1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            Log.d("md5", "Digest(in hex format):: " + hexString.toString());
+            return hexString.toString();
+        } catch(NoSuchAlgorithmException nae) {
+            nae.printStackTrace();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
     public void encryptFile(File file, String fname) {
 

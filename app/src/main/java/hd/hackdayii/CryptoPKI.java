@@ -136,8 +136,11 @@ public class CryptoPKI {
     }
 
     PublicKey readPublicKey() throws Exception {
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), MY_PUBLIC_KEY_FILE);
 
-        InputStream in = new FileInputStream(MY_PUBLIC_KEY_FILE);
+        InputStream in = new FileInputStream(file);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));
         try {
@@ -157,16 +160,18 @@ public class CryptoPKI {
 
 
     PublicKey readPrivateKey() throws Exception {
-        InputStream in = new FileInputStream(MY_PRIVATE_KEY_FILE);
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), MY_PRIVATE_KEY_FILE);
+
+        InputStream in = new FileInputStream(file);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));
-        try {
-            BigInteger m = (BigInteger) oin.readObject();
-            BigInteger e = (BigInteger) oin.readObject();
-            RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
-            KeyFactory fact = KeyFactory.getInstance("RSA");
-            PublicKey priKey = fact.generatePublic(keySpec);
-            return priKey;
+            try {
+                BigInteger m = (BigInteger) oin.readObject();
+                BigInteger e = (BigInteger) oin.readObject();
+                RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
+                KeyFactory fact = KeyFactory.getInstance("RSA");
+                PublicKey priKey = fact.generatePublic(keySpec);
+                return priKey;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
