@@ -9,4 +9,13 @@
         android:id="@android:id/list">
     </ListView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/share_button"
+        android:text="Share File"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        />
+
 </LinearLayout>
