@@ -70,6 +70,8 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     public void onSelect(String path) {
         String[] selectedFilesPaths = path.split(FileChooserDialog.FILE_NAMES_SEPARATOR);
         // Do whatever you want to do with selected files
-
+        for (int i = 0; i < selectedFilesPaths.length; i++) {
+            Log.d("FILES", selectedFilesPaths[i]);
+        }
     }
 }
