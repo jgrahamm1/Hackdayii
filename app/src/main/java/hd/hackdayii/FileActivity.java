@@ -87,6 +87,9 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     public String m_data;
     public String m_fname;
 
+    // BUTTOOOOOOOONNNNNN
+    public Button view_btn;
+
     void fetchdata() {
         String pubkey = "";
         String serv_res = "";
@@ -266,15 +269,10 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 generate_keypair();
             }
 
-        String[] values = new String[]{"Android", "iPhone", "WindowsMobile is dead",
-                "Blackberry seriously sucks", "WebOS", "Ubuntu Sucks", "Windows7 Sucks", "Max OS X Is Best",
-                "Linux is ok", "OS/2"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, values);
-        //setListAdapter(adapter);
+
 
         final FileChooserDialog.Builder builder = new FileChooserDialog.Builder(FileChooserDialog.ChooserType.FILE_CHOOSER, this);
-
+            
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
