@@ -28,17 +28,17 @@ public class LstAdapter extends ArrayAdapter<String> {
         this.values = values;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.label);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-        textView.setText(values[position]);
-        // change the icon for Windows and iPhone
-        String s = values[position];
-
-        return rowView;
-    }
+//    @Override
+//    public View getView(int position, View convertView, ViewGroup parent) {
+//        LayoutInflater inflater = (LayoutInflater) context
+//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
+//        TextView textView = (TextView) rowView.findViewById(R.id.label);
+//        ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+//        textView.setText(values[position]);
+//        // change the icon for Windows and iPhone
+//        String s = values[position];
+//
+//        return rowView;
+//    }
 }
