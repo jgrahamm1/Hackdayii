@@ -174,6 +174,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
             RSAPrivateKeySpec priv = fact.getKeySpec(kp.getPrivate(),
                     RSAPrivateKeySpec.class);
+
             cr.saveToFile(cr.MY_PRIVATE_KEY_FILE,
                     priv.getModulus(), priv.getPrivateExponent());
 

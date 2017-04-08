@@ -126,6 +126,9 @@ public class CryptoPKI {
         return decryptedBytes;
     }
 
+<<<<<<< HEAD
+    PublicKey readPublicKey() throws Exception {
+=======
     public byte[] RSADecryptPrivate(byte[] encryptedBytes) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         cipher1 = Cipher.getInstance("RSA");
@@ -135,8 +138,8 @@ public class CryptoPKI {
         return decryptedBytes;
     }
 
-    PublicKey readPublicKey() throws Exception {
-
+    private PublicKey readPublicKey() throws Exception {
+>>>>>>> 64b25f6483deff225c434e21c6eebc2cc3fa49d1
         InputStream in = new FileInputStream(MY_PUBLIC_KEY_FILE);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));
