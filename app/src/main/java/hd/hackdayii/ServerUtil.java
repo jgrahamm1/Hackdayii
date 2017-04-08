@@ -1,4 +1,4 @@
-package com.example.jgraham.kitabureg1;
+package hd.hackdayii;
 
 import android.content.Context;
 import android.util.Log;
@@ -62,7 +62,7 @@ public final class ServerUtil {
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setFixedLengthStreamingMode(bytes.length);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded;charset=UTF-8");
             // post the request

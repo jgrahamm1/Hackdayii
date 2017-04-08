@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hd.hackdayii">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -40,6 +42,14 @@
         <activity android:name=".ContactsActivity">
             <intent-filter>
                 <action android:name="hd.hackdayii.ContactsActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SharedActivity">
+            <intent-filter>
+                <action android:name="hd.hackdayii.SharedActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
