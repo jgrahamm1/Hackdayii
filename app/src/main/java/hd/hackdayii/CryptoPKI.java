@@ -22,21 +22,13 @@ import javax.crypto.NoSuchPaddingException;
 
 public class CryptoPKI {
 
-    KeyPairGenerator kpg;
-    KeyPair kp;
-    PublicKey publicKey;
-    PrivateKey privateKey;
     byte[] encryptedBytes, decryptedBytes;
     Cipher cipher, cipher1;
     String encrypted, decrypted;
 
     public byte[] RSAEncryptPub(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        kpg = KeyPairGenerator.getInstance("RSA");
-        kpg.initialize(2048);
-        kp = kpg.genKeyPair();
-        publicKey = kp.getPublic();
-        privateKey = kp.getPrivate();
+
 
         cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
