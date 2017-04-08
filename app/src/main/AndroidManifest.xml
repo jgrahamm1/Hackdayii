@@ -36,6 +36,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SharedActivity">
+            <intent-filter>
+                <action android:name="hd.hackdayii.SharedActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
