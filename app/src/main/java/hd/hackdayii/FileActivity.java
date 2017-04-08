@@ -1,19 +1,21 @@
 package hd.hackdayii;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-/*
-** MainActivity: The launch screen of the application
+/**
+ * Created by jgraham on 4/8/17.
+ * FileActivity: This activity shows the user their files and has the buttons that let them share
+ * stuff.
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class FileActivity extends AppCompatActivity implements View.OnClickListener {
 
-    protected Button login_button; // Login button
+    protected Button share_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         // Register listener for buttons
-        login_button = (Button) findViewById(R.id.login_button);
-        login_button.setOnClickListener(this);
+        share_button = (Button) findViewById(R.id.share_button);
+        share_button.setOnClickListener(this);
     }
 
     /*
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             default:
-                Log.d("ERROR", "MainActivity OnClickListener does not recognize this View");
+                Log.d("ERROR", "FileActivity OnClickListener does not recognize this View");
         }
     }
+
 }
