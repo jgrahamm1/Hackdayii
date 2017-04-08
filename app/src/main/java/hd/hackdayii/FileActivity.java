@@ -71,12 +71,11 @@ import static org.apache.commons.io.FileUtils.readFileToByteArray;
  * stuff.
  */
 
-public class FileActivity extends AppCompatActivity implements FileChooserDialog.ChooserListener {
+public class FileActivity extends AppCompatActivity implements FileChooserDialog.ChooserListener, View.OnClickListener {
 
 
     KeyPairGenerator kpg;
     KeyPair kp;
-    protected Button login_button; // Login button
     protected EditText phone_etxt; // Phone Number EditText
     PublicKey publicKey;
     PrivateKey privateKey;
@@ -269,10 +268,12 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 generate_keypair();
             }
 
-
+            // Register listener for buttons
+            view_btn = (Button) findViewById(R.id.viewf_button);
+            view_btn.setOnClickListener(this);
 
         final FileChooserDialog.Builder builder = new FileChooserDialog.Builder(FileChooserDialog.ChooserType.FILE_CHOOSER, this);
-            
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -499,4 +500,23 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             }
         } // PostExecute close
     } // Login Asynctask close
+
+    /*
+* When buttons are clicked
+*/
+    @Override
+    public void onClick(View v) {
+        // Determine if user pressed 'Login' or 'Register'
+        switch (v.getId()) {
+
+            // Login Button
+            case R.id.viewf_button:
+                    Intent intent = new Intent(v.getContext(), SharedActivity.class);
+                    startActivity(intent);
+                break;
+
+            default:
+                Log.d("ERROR", "MainActivity OnClickListener does not recognize this View");
+        }
+    }
 }
