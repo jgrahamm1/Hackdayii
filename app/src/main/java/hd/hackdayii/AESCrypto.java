@@ -51,6 +51,13 @@ public class AESCrypto {
     }
 
 
+    public static String encrypt(byte[] bytes)
+            throws Exception {
+        byte[] rawKey = getRawKey();
+        byte[] result = encrypt(rawKey, bytes);
+        return toHex(result);
+    }
+
     public static String encrypt(String cleartext)
             throws Exception {
         byte[] rawKey = getRawKey();
