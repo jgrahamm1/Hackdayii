@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 /*
 ** MainActivity: The launch screen of the application
@@ -14,6 +15,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     protected Button login_button; // Login button
+    protected EditText phone_etxt; // Phone Number EditText
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Register listener for buttons
         login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(this);
+
+        phone_etxt = (EditText) findViewById(R.id.input_phone);
     }
 
     /*
