@@ -4,7 +4,10 @@ package hd.hackdayii;
  * Created by kiwi-the-worst on 4/8/17.
  */
 
+import android.os.Environment;
+
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -140,15 +143,21 @@ public class CryptoPKI {
     public void saveToFile(String fileName,
                                    BigInteger mod, BigInteger exp)
             throws Exception {
-        ObjectOutputStream oout = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(fileName)));
+
+        // Get the directory for the user's public pictures directory.
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS), fileName);
+        FileOutputStream stream = null;
         try {
+            ObjectOutputStream oout = new ObjectOutputStream(
+                    new BufferedOutputStream(new FileOutputStream(file)));
+
             oout.writeObject(mod);
             oout.writeObject(exp);
+            oout.close();
+
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            oout.close();
         }
     }
 
