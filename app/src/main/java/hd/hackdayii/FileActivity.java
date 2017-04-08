@@ -14,13 +14,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
+import ir.sohreco.androidfilechooser.FileChooserDialog;
+
 /**
  * Created by jgraham on 4/8/17.
  * FileActivity: This activity shows the user their files and has the buttons that let them share
  * stuff.
  */
 
-public class FileActivity extends ListActivity {
+public class FileActivity extends AppCompatActivity implements FileChooserDialog.ChooserListener {
 
     private static final int READ_REQUEST_CODE = 42;
 
@@ -34,14 +37,20 @@ public class FileActivity extends ListActivity {
                 "Linux is ok", "OS/2" };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, values);
-        setListAdapter(adapter);
+        //setListAdapter(adapter);
+
+        final FileChooserDialog.Builder builder = new FileChooserDialog.Builder(FileChooserDialog.ChooserType.FILE_CHOOSER, this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), "Action Button Pressed!", Toast.LENGTH_SHORT).show();
+                try {
+                    builder.build().show(getSupportFragmentManager(), null);
+                } catch (ExternalStorageNotAvailableException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getApplicationContext(), "Action Button Pressed!", Toast.LENGTH_SHORT).show();
 //                performFileSearch();
 //                Intent docIntent = new Intent(Intent.ACTION_GET_CONTENT);
 //                //mediaIntent.setType("video/*"); //set mime type as per requirement
@@ -50,32 +59,17 @@ public class FileActivity extends ListActivity {
         });
     }
 
+//    @Override
+//    protected void onListItemClick(ListView l, View v, int position, long id) {
+//        String item = (String) getListAdapter().getItem(position);
+//        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+//    }
+
+
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        String item = (String) getListAdapter().getItem(position);
-        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
+    public void onSelect(String path) {
+        String[] selectedFilesPaths = path.split(FileChooserDialog.FILE_NAMES_SEPARATOR);
+        // Do whatever you want to do with selected files
+
     }
-
-    /**
-     * Fires an intent to spin up the "file chooser" UI and select an image.
-     */
-    public void performFileSearch() {
-
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
-//        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//
-//        // Filter to only show results that can be "opened", such as a
-//        // file (as opposed to a list of contacts or timezones)
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//
-//        // Filter to show only images, using the image MIME data type.
-//        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-//        // To search for all documents available via installed storage providers,
-//        // it would be "*/*".
-//        intent.setType("image/*");
-//
-//        startActivityForResult(intent, READ_REQUEST_CODE);
-    }
-
 }
