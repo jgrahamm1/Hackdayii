@@ -58,28 +58,43 @@ public class CryptoPKI {
         privateKey = pkEntry.getPrivateKey();
     }
 
-    public byte[] RSAEncryptPub(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
+    public byte[] RSAEncryptPub(final String plain, PublicKey encryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-
-
         cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        cipher.init(Cipher.ENCRYPT_MODE, encryptKey);
         encryptedBytes = cipher.doFinal(plain.getBytes());
-        System.out.println("EEncrypted?????" + toHex(encryptedBytes));
+//        System.out.println("EEncrypted?????" + toHex(encryptedBytes));
         return encryptedBytes;
     }
 
-    public String RSADecryptPub(final byte[] encryptedBytes) throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 
+    public byte[] RSADecryptPub(final byte[] encryptedBytes, PublicKey decryptKey) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        cipher1 = Cipher.getInstance("RSA");
+        cipher1.init(Cipher.DECRYPT_MODE, decryptKey);
+        decryptedBytes = cipher1.doFinal(encryptedBytes);
+//        decrypted = new String(decryptedBytes);
+//        System.out.println("DDecrypted?????" + decrypted);
+        return decryptedBytes;
+    }
+
+    public byte[] RSAEncryptPrivate(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+        encryptedBytes = cipher.doFinal(plain.getBytes());
+//        System.out.println("EEncrypted?????" + toHex(encryptedBytes));
+        return encryptedBytes;
+    }
+
+    public byte[] RSADecryptPrivate(final String plain) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         cipher1 = Cipher.getInstance("RSA");
         cipher1.init(Cipher.DECRYPT_MODE, privateKey);
         decryptedBytes = cipher1.doFinal(encryptedBytes);
-        decrypted = new String(decryptedBytes);
-        System.out.println("DDecrypted?????" + decrypted);
-        return decrypted;
+//        System.out.println("DDecrypted?????" + decrypted);
+        return decryptedBytes;
     }
-
 
     private PublicKey readPublicKey() throws Exception {
         InputStream in = new FileInputStream(MY_PUBLIC_KEY_FILE);
