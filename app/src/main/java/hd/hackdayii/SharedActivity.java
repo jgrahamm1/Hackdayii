@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class SharedActivity extends AppCompatActivity implements View.OnClickLis
     ArrayList<File> file_paths = new ArrayList<>();
     ArrayList<String> file_names = new ArrayList<>();
     String m_phoneno;
+    String m_hex;
 
     public Button get_btn;
 
@@ -124,7 +128,32 @@ public class SharedActivity extends AppCompatActivity implements View.OnClickLis
             if (result != null) {
                 Log.d("GETFILE", "onPostExecute got result: " + result);
                 String tr = "false";
+                try {
+                    JSONObject response = new JSONObject(result);
+                    Log.d("GETFILE", "JSONObject received: " + result.toString());
+                    parseResponse(response);
+                } catch (JSONException e) {
+                    Log.d("GETFILE", "JSONException...");
+                    e.printStackTrace();
+                }
             }
         } // PostExecute close
     } // Login Asynctask close
+
+    public void parseResponse(JSONObject result) {
+        try {
+            JSONObject drive_json = result.getJSONObject("drive");
+            String phoneno = drive_json.getString("phoneno");
+            String filename = drive_json.getString("filename");
+            String data = drive_json.getString("data");
+            m_hex = data;
+            Log.d("GETFILE", "We got the data: " + data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void bytesFromHex(String hex_str) {
+    }
 }
