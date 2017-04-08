@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -48,8 +49,10 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
@@ -75,8 +78,22 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     private static final int READ_REQUEST_CODE = 42;
 
     void fetchdata() {
+        String pubkey = "";
         String serv_res = "";
         Map<String, String> params = new HashMap<String, String>();
+        SharedPreferences keyValues = getSharedPreferences("seckey_preferences",
+                Context.MODE_PRIVATE);
+        String phoneno = keyValues.getString("phoneno", null);
+        params.put("phoneno", phoneno);
+        CryptoPKI cryptoPKI = new CryptoPKI();
+        try {
+            pubkey = cryptoPKI.readPublicKey().toString();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        params.put("pubkey", pubkey);
         try {
             serv_res = ServerUtil.get("http://kitabu.prashant.at/api/register", params, getApplicationContext());
             Log.d("Register response", serv_res);
@@ -96,10 +113,31 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             }
             else
             {
+                Map<String,?> keys = keyValues.getAll();
 
+                for(Map.Entry<String,?> entry : keys.entrySet()){
+                    Log.d("map values",entry.getKey() + ": " +
+                            entry.getValue().toString());
+                }
+
+                Map<String, String> aMap = new HashMap<String, String>();
                 JSONObject jObject = new JSONObject(serv_res);
                 JSONArray jsonArray = jObject.getJSONArray("keys");
                 Log.d("JSON ARRAY", jsonArray.toString());
+                for (int i = 0; i < jsonArray.length(); i++)
+                {
+                    JSONObject row = jsonArray.getJSONObject(i);
+                    aMap.put(row.getString("phoneno"), row.getString("pubkey"));
+                }
+                Log.d("Hashmap", aMap.toString());
+
+                SharedPreferences.Editor keyValuesEditor = keyValues.edit();
+
+                for (String s : aMap.keySet()) {
+                    keyValuesEditor.putString(s, aMap.get(s));
+                }
+
+                keyValuesEditor.commit();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -142,8 +180,6 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
                     RSAPublicKeySpec.class);
 
-            cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
-                    pub.getModulus(), pub.getPublicExponent());
             cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
                     pub.getModulus(), pub.getPublicExponent());
 
@@ -191,10 +227,11 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 
             Intent intent = getIntent();
 
+
             if (intent.getStringExtra("phoneno") != null) {
                 SharedPreferences sharedPreferences = getSharedPreferences("seckey_preferences",
                         Context.MODE_PRIVATE);
-                String phoneno = intent.getStringExtra("phoneno");
+                String phoneno = intent.getStringExtra("phoneno").toString();
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("phoneno", phoneno);
                 editor.commit();
@@ -217,8 +254,6 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 generate_keypair();
             }
 
-            FetchDataAsyncTask asyncTask = new FetchDataAsyncTask();
-        asyncTask.execute();
         String[] values = new String[]{"Android", "iPhone", "WindowsMobile is dead",
                 "Blackberry seriously sucks", "WebOS", "Ubuntu Sucks", "Windows7 Sucks", "Max OS X Is Best",
                 "Linux is ok", "OS/2"};
@@ -244,6 +279,9 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
 //                startActivityForResult(docIntent, 2);
             }
         });
+
+            FetchDataAsyncTask asyncTask = new FetchDataAsyncTask();
+            asyncTask.execute();
     }
 
 //    @Override

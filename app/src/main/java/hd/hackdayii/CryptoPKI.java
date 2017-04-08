@@ -98,7 +98,7 @@ public class CryptoPKI {
         return decryptedBytes;
     }
 
-    private PublicKey readPublicKey() throws Exception {
+    PublicKey readPublicKey() throws Exception {
         InputStream in = new FileInputStream(MY_PUBLIC_KEY_FILE);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));
@@ -118,7 +118,7 @@ public class CryptoPKI {
     }
 
 
-    private PublicKey readPrivateKey() throws Exception {
+    PublicKey readPrivateKey() throws Exception {
         InputStream in = new FileInputStream(MY_PRIVATE_KEY_FILE);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));

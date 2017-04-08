@@ -70,8 +70,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         phone_etxt = (EditText) findViewById(R.id.input_phone);
 
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+             int anotherpermission =  ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED || anotherpermission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_CODE);
         } else {
             // Your app already has the permission to access files and folders
             // so you can simply open FileChooser here.
@@ -101,7 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (validate()) {
                     Intent login_intent = new Intent(v.getContext(), FileActivity.class);
                     login_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    login_intent.putExtra("phoneno", phone_etxt.toString());
+                    login_intent.putExtra("phoneno", phone_etxt.getText().toString());
+                    Log.d("phoneno", phone_etxt.getText().toString());
                     startActivity(login_intent);
                 }
                 break;
