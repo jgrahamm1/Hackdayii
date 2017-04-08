@@ -14,6 +14,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import ir.sohreco.androidfilechooser.ExternalStorageNotAvailableException;
 import ir.sohreco.androidfilechooser.FileChooserDialog;
 
@@ -72,6 +80,34 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         // Do whatever you want to do with selected files
         for (int i = 0; i < selectedFilesPaths.length; i++) {
             Log.d("FILES", selectedFilesPaths[i]);
+        }
+
+        readFile(selectedFilesPaths[0]);
+    }
+
+    public void readFile(String filepath) {
+        List<Integer> list = new ArrayList<Integer>();
+        File file = new File(filepath);
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String text = null;
+
+            while ((text = reader.readLine()) != null) {
+                Log.d("FILES", text);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+            }
         }
     }
 }
