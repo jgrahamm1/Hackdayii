@@ -45,61 +45,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected Button login_button; // Login button
     protected EditText phone_etxt; // Phone Number EditText
 
-    KeyPairGenerator kpg;
-    KeyPair kp;
-    PublicKey publicKey;
-    PrivateKey privateKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
-            kpg = KeyPairGenerator.getInstance("RSA");
-            kpg.initialize(2048);
-            kp = kpg.genKeyPair();
-            publicKey = kp.getPublic();
-
-            KeyFactory fact = KeyFactory.getInstance("RSA");
-            RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
-                    RSAPublicKeySpec.class);
-
-            CryptoPKI cr = new CryptoPKI();
-
-            cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
-                    pub.getModulus(), pub.getPublicExponent());
-
-            privateKey = kp.getPrivate();
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(null);
-            KeyStore.PrivateKeyEntry pkEntry =
-                    new KeyStore.PrivateKeyEntry(privateKey,null);
-
-            ks.setEntry("privateKey", pkEntry, null);
-
-            // store away the keystore
-            try (FileOutputStream fos = new FileOutputStream("seckeystore")) {
-                ks.store(fos, null);
-            }
-
-        } catch (NoSuchAlgorithmException ns) {
-            ns.printStackTrace();
-        } catch (KeyStoreException kse) {
-            kse.printStackTrace();
-        } catch (FileNotFoundException fne) {
-            fne.printStackTrace();
-        } catch (IOException ie) {
-            ie.printStackTrace();
-        } catch (java.security.cert.CertificateException ce) {
-            ce.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Register listener for buttons
         login_button = (Button) findViewById(R.id.login_button);
         login_button.setOnClickListener(this);
