@@ -77,6 +77,11 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
     PrivateKey privateKey;
     private static final int READ_REQUEST_CODE = 42;
 
+    // Values to send in putfiles
+    public String m_phoneno;
+    public String m_data;
+    public String m_fname;
+
     void fetchdata() {
         String pubkey = "";
         String serv_res = "";
@@ -85,6 +90,7 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 Context.MODE_PRIVATE);
         String phoneno = keyValues.getString("phoneno", null);
         params.put("phoneno", phoneno);
+        m_phoneno = phoneno;
         CryptoPKI cryptoPKI = new CryptoPKI();
         try {
             pubkey = cryptoPKI.readPublicKey().toString();
@@ -285,13 +291,6 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
             asyncTask.execute();
     }
 
-//    @Override
-//    protected void onListItemClick(ListView l, View v, int position, long id) {
-//        String item = (String) getListAdapter().getItem(position);
-//        Toast.makeText(this, item + " selected", Toast.LENGTH_LONG).show();
-//    }
-
-
     @Override
     public void onSelect(String path) {
         String[] selectedFilesPaths = path.split(FileChooserDialog.FILE_NAMES_SEPARATOR);
@@ -366,6 +365,13 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
                 stream.write(hex.getBytes());
                 stream.close();
                 Log.d("FILES", "Encrypted file saved to " + file.getAbsolutePath());
+
+                // Send the file to the server
+                m_data = hex;
+                m_fname = fname;
+                SendFileTask sft = new SendFileTask();
+                sft.execute();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -383,4 +389,46 @@ public class FileActivity extends AppCompatActivity implements FileChooserDialog
         }
         return fname;
     }
+
+    class SendFileTask extends AsyncTask<Void, Void, String> {
+
+        private Exception exception;
+        private String serv_res;
+
+        /*
+         * Let's get this done in the background.
+         */
+        protected String doInBackground(Void... arg0) {
+            try {
+                // Put parameters in map
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("phoneno", m_phoneno);
+                params.put("data", m_data);
+                params.put("filename", m_fname);
+                // Send to server
+                try {
+                    serv_res = ServerUtil.get("http://kitabu.prashant.at/api/putfiles",
+                            params, getBaseContext());
+                } catch (IOException e) {
+                    Log.d("SENDFILES", "Sending to server did not work");
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                this.exception = e;
+                Log.d("SENDFILES", "Async doInBackground failed");
+                return null;
+            }
+            return serv_res;
+        }
+
+        /*
+         * The background thing ended... so what now?
+         */
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Log.d("SENDFILE", "onPostExecute got result: " + result);
+                String tr = "false";
+            }
+        } // PostExecute close
+    } // Login Asynctask close
 }
