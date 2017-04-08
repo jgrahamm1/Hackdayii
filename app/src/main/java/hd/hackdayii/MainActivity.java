@@ -13,17 +13,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
+
 
 /*
 ** MainActivity: The launch screen of the application
  */
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    static String PUBLIC_KEY_FILE = "pubkey";
 
     public static int PERMISSION_REQUEST_CODE = 4;
 
@@ -45,8 +55,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             kp = kpg.genKeyPair();
             publicKey = kp.getPublic();
             privateKey = kp.getPrivate();
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null);
+            KeyStore.PrivateKeyEntry pkEntry =
+                    new KeyStore.PrivateKeyEntry(privateKey,null);
+
+            ks.setEntry("privateKey", pkEntry, null);
+
+            // store away the keystore
+            try (FileOutputStream fos = new FileOutputStream("seckeystore")) {
+                ks.store(fos, null);
+            }
+
         } catch (NoSuchAlgorithmException ns) {
             ns.printStackTrace();
+        } catch (KeyStoreException kse) {
+            kse.printStackTrace();
+        } catch (FileNotFoundException fne) {
+            fne.printStackTrace();
+        } catch (IOException ie) {
+            ie.printStackTrace();
+        } catch (java.security.cert.CertificateException ce) {
+            ce.printStackTrace();
         }
 
         // Register listener for buttons
