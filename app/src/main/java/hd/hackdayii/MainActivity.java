@@ -1,5 +1,6 @@
 package hd.hackdayii;
 
+import hd.hackdayii.CryptoPKI;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -25,6 +27,9 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableEntryException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 
 
 
@@ -33,7 +38,7 @@ import java.security.PublicKey;
  */
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    static String PUBLIC_KEY_FILE = "pubkey";
+
 
     public static int PERMISSION_REQUEST_CODE = 4;
 
@@ -54,6 +59,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             kpg.initialize(2048);
             kp = kpg.genKeyPair();
             publicKey = kp.getPublic();
+
+            KeyFactory fact = KeyFactory.getInstance("RSA");
+            RSAPublicKeySpec pub = fact.getKeySpec(kp.getPublic(),
+                    RSAPublicKeySpec.class);
+
+            CryptoPKI cr = new CryptoPKI();
+
+            cr.saveToFile(cr.MY_PUBLIC_KEY_FILE,
+                    pub.getModulus(), pub.getPublicExponent());
+
             privateKey = kp.getPrivate();
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null);
@@ -77,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ie.printStackTrace();
         } catch (java.security.cert.CertificateException ce) {
             ce.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Register listener for buttons

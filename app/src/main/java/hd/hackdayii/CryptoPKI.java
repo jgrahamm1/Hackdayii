@@ -37,7 +37,9 @@ import javax.crypto.NoSuchPaddingException;
 
 
 public class CryptoPKI {
-    static String PUBLIC_KEY_FILE = "pubkey";
+    public String MY_PUBLIC_KEY_FILE = "mypubkey";
+    public String OTHER_PUBLIC_KEY_FILE = "otherpubkey";
+
     byte[] encryptedBytes, decryptedBytes;
     Cipher cipher, cipher1;
     String encrypted, decrypted;
@@ -79,8 +81,8 @@ public class CryptoPKI {
     }
 
 
-    private static PublicKey readPublicKey() throws Exception {
-        InputStream in = new FileInputStream(PUBLIC_KEY_FILE);
+    private PublicKey readPublicKey() throws Exception {
+        InputStream in = new FileInputStream(MY_PUBLIC_KEY_FILE);
         ObjectInputStream oin =
                 new ObjectInputStream(new BufferedInputStream(in));
         try {
@@ -98,7 +100,7 @@ public class CryptoPKI {
         return null;
     }
 
-    private static void saveToFile(String fileName,
+    public void saveToFile(String fileName,
                                    BigInteger mod, BigInteger exp)
             throws Exception {
         ObjectOutputStream oout = new ObjectOutputStream(
