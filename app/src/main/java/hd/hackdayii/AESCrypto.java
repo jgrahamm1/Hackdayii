@@ -31,6 +31,14 @@ public class AESCrypto {
         return new String(result);
     }
 
+    public static String decrypt(String raw, String encrypted)
+            throws Exception {
+        byte[] enc = toByte(encrypted);
+        byte[] bytekey = toByte(raw);
+        byte[] result = decrypt(bytekey, enc);
+        return new String(result);
+    }
+
     private static byte[] decrypt(byte[] encrypted)
             throws Exception {
 
@@ -92,6 +100,7 @@ public class AESCrypto {
     }
 
     public static byte[] toByte(String hexString) {
+        Log.d("tst",hexString);
         int len = hexString.length() / 2;
         byte[] result = new byte[len];
         for (int i = 0; i < len; i++)

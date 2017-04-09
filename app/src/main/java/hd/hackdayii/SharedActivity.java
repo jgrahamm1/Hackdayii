@@ -146,12 +146,13 @@ public class SharedActivity extends AppCompatActivity implements View.OnClickLis
             String phoneno = drive_json.getString("phoneno");
             String filename = drive_json.getString("filename");
             String data = drive_json.getString("data");
+            String aes = drive_json.getString("aes");
             m_hex = data;
-            Log.d("GETFILE", "We got the data: " + data);
-        } catch (JSONException e) {
+            String decrypted = AESCrypto.decrypt(aes,data);
+            Log.d("GETFILE", "We got the data: " + data+ " \n decrypted: "+ decrypted);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void bytesFromHex(String hex_str) {
